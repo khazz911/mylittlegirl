@@ -1,0 +1,153 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Made For Berti Saputri 🎁</title>
+    <meta name="language" content="id"> 
+    <meta name="description" content="Sebuah hadiah penuh kasih sayang untuk Berti Saputri! Klik untuk melihat kejutan!">
+
+    <link rel="icon" href="image/logo.png" type="image/png">
+    <link rel="apple-touch-icon" href="image/logo.png">
+
+    <meta property="og:title" content="Made For Berti Saputri 🎁">
+    <meta property="og:description" content="Sebuah hadiah penuh kasih sayang untuk Berti Saputri! Klik untuk melihat kejutan!">
+    <meta property="og:image" content="image/logo.png">
+    <meta property="og:type" content="website">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Made For Berti Saputri 🎁">
+    <meta name="twitter:description" content="Sebuah hadiah penuh kasih sayang untuk Berti Saputri! Klik untuk melihat kejutan!">
+
+    <link rel="icon" type="image/x-icon" href="https://cdn.jsdelivr.net/gh/sun0225SUN/photos/img/20210715233345.png">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css?family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+</head>
+
+<body>
+    <button id="langSwitchBtn" style="display:none;top:20px;right:150px;z-index:10000004;padding:8px 16px;border-radius:8px;background:#fff;color:#222;border:1px solid #dadce0;cursor:pointer;">
+        EN/ID
+    </button>
+    
+    <div id="googleAuthContainer" style="display: none; position: fixed; top: 20px; left: 20px; z-index: 10003; font-family: Arial, sans-serif;">
+        <button id="googleLoginBtn" style="display: flex; align-items: center; padding: 8px 12px; background: none; border: 1px solid #dadce0; border-radius: 24px; font-size: 14px; font-weight: 500; color: #3c4043; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.3s ease;">
+            <svg width="18" height="18" viewBox="0 0 24 24">
+                <path fill="#4285f4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                <path fill="#34a853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                <path fill="#fbbc05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                <path fill="#ea4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+            </svg>
+        </button>
+
+        <div id="userInfo" style="display: none; align-items: center; padding: 8px 12px; background: none; border: 1px solid #dadce0; border-radius: 24px; font-size: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <img id="userAvatar" style="width: 24px; height: 24px; border-radius: 50%; margin-right: 8px;">
+            <div style="margin-right: 12px;">
+                <div id="userName" style="font-weight: 500; color: #ffffff;"></div>
+                <div id="userEmail" style="font-size: 12px; color: #ffffff;"></div>
+            </div>
+            <button id="logoutBtn" style="padding: 4px 8px; background: none; border: 1px solid #dadce0; border-radius: 4px; font-size: 12px; cursor: pointer; color: #fbfbfc;">Keluar</button>
+        </div>
+    </div>
+
+    <canvas id="matrix-rain" style="display: none;"></canvas>
+    <canvas style="position:absolute;width:100%;height:100%;z-index:9999;display:none;" class="canvas"></canvas>
+    
+    <div class="overlay">
+        <div class="stars-container" id="starsContainer"></div>
+        <img id="gift-image" src="image/happy3.gif" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10000; max-width: 80%; max-height: 80%;" />
+        <div class="content-display" id="contentDisplay">
+            <p id="contentText"></p>
+        </div>
+        <div class="firework-container" id="fireworkContainer"></div>
+        <div class="book-container">
+            <div class="book" id="book"></div>
+        </div>
+
+        <button class="music-control" id="musicControl" title="Play/Pause Music">▶</button>
+        <button class="settings-button" id="settingsButton" title="Settings" style="display: none;">⚙</button>
+
+        <div id="settingsHint" class="settings-hint">
+            <div class="hint-text" style="display: none;">Klik di sini untuk mengatur keinginanmu</div>
+        </div>
+
+        <div id="settingsModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>⚙️ Pengaturan Website</h2>
+                    <span class="close">×</span>
+                </div>
+                <div class="modal-body">
+                    <div class="settings-section">
+                        <h3>🎵 Pengaturan Musik</h3>
+                        <div class="form-group">
+                            <label for="backgroundMusic">Musik Latar:</label>
+                            <div class="music-select-row">
+                                <select id="backgroundMusic">
+                                    <option value="" disabled selected>Memuat daftar musik...</option>
+                                </select>
+                                <button type="button" id="musicPreviewButton" class="music-preview-btn">▶ Coba</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>🌧️ Pengaturan Efek Hujan Teks</h3>
+                        <div class="form-group">
+                            <label for="matrixText">Teks Utama Hujan:</label>
+                            <input type="text" id="matrixText" value="BERTI SAPUTRI">
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>✨ Pengaturan Pesan Utama</h3>
+                        <div class="form-group">
+                            <label for="sequenceText">Isi Pesan (Pisahkan dengan |):</label>
+                            <textarea id="sequenceText" style="width: 100%; height: 100px; padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-family: inherit;">Happy Birthdayy|perempuan kesayangankuu|Berti Saputri ❤️|Hari iniii adalah hari lahir seseorang|yang selalu berhasil bikin hari hari aku|terasa lebih indah.|aku benar benar bersyukur|karena semesta mempertemukan aku|sama kamu kekasihku|Berti Saputri👑💕.|terima kasih sudah hadir|sudah bertahan|dan sudah jadi tempat ternyaman|yang selalu aku punya sampai sekarangg.|Aku tahu mungkin kita nggak selalu sempurna|kadang ada salah paham, ada sedihnya juga.|tapi dari semua hal yang pernah kita lewatin..|satu hal yang nggak pernah berubah|adalah rasa sayang aku ke kamu🥹.|sejauh apa pun keadaan berubah|sebesar apa pun masalah datang|rasa sayang aku nggak akan pernah hilang|buat kamu sayaanggg.|kamu tetap jadi orang yang selalu aku pilihh|selaluu aku perjuanginn|dan selaluu aku simpan paling dalam di hati akuu|dan aku gapernah boong soal itu❤️.|Di umur kamu yang baru inii|aku berharap semua hal baik selalu datang|ke hidup kamu.|semoga kamu selalu sehat|panjang umur|dimudahkan semua urusannyaa|dilancarkan rezekinya|dan semua impian yang kamu pengen|bisa tercapai satu per satuu|Aamiin Ya Rabbal 'Alamiin.|akuu juga berharap kamuu|nggaa kehilangan alasan buat bahagia|karena kamu pantas mendapatkan|dunia yang baik dan penuh cintaa.|Maaf sayangg selama ini aku masih banyak kurangnyaa|tapi percayalahh|setiap rasa peduli, perhatian, dan cinta|yang aku kasih ke kamu itu selalu tulus|dari hati aku yang palinggggg dalammm.|aku akan selalu berusaha ada buat kamu|nemenin kamu|dan jadi seseorang yang bisa bikin kamu|merasa dicintai setiap harinyaaa.|Terima kasih sudah jadii rumahh|untuk segalaa ceritaa akuu.|terima kasih karena selalu membuat aku|merasa berartii.|dan sekali lagi sayangg|jangan pernah ragu tentang perasaan akuu|karena rasa sayang ini ngga akan pernah hilang|buat kamu manusia favoritku.|Happy birthday, sayangkuu cintakuu|manisskuu duniakuuu istrikuuu|tersayangg tercantikk terimutt|palingg ngangeninnn|I loveeeee youuuuu|moree than words can explainn 💫🕊️💕🧣🫶</textarea>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>🎁 Pengaturan Gambar/GIF</h3>
+                        <div class="form-group">
+                            <label for="giftImage">Gambar Animasi:</label>
+                            <select id="giftImage">
+                                <option value="image/happy3.gif">Happy 3 (Default)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button id="applySettings" class="apply-settings-btn">🎉 Terapkan & Simpan</button>
+                </div>
+            </div>
+        </div>
+
+        <audio id="birthdayAudio" loop>
+            <source src="music/happybirtday_uia.mp3" type="audio/mpeg">
+        </audio>
+
+        <div id="orientation-lock">
+            <div class="phone-icon">
+                <img src="image/screen.png" alt="">
+            </div>
+        </div>
+
+        <button id="fullscreenBtn" style="position: fixed; bottom: 20px; right: 20px; z-index: 990010; padding: 10px 18px; border-radius: 8px; border: none; background: #222; color: #fff; font-size: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); cursor: pointer; display: none;">
+            <img style="width: 20px; height: 20px; vertical-align: middle;" src="image/full.png" alt="">
+        </button>
+    </div>
+
+    <script src="jscp/detect-devtools.js"></script>
+    <script src="lang.js"></script>
+    <script src="jscp/settings.js"></script>
+    <script src="jscp/main.js"></script>
+    <script src="jscp/ui.js"></script>
+</body>
+
+</html>
